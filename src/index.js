@@ -1,8 +1,6 @@
-import geoAlbersUsaVertical from "./albersUsaVertical.js";
-import geoAlbersUsaPrVertical from "./albersUsaPrVertical.js";
+import geoAlbersUsaMapshaper from "./albersUsaMapshaper.js";
 
 export {
-  geoAlbersUsaVertical,
-  geoAlbersUsaPrVertical
+  geoAlbersUsaMapshaper
 };
 
