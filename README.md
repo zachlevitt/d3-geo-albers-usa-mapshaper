@@ -1,6 +1,6 @@
 # d3-geo-albers-usa-mapshaper
 
-A [d3-geo](https://d3js.org/d3-geo) composite projection that matches [Mapshaper](https://mapshaper.org/)’s `albersusa` projection, so geometries processed in Mapshaper line up when you draw them in D3 with the same projection parameters.
+A [d3-geo](https://d3js.org/d3-geo) composite projection that **roughly** matches [Mapshaper](https://mapshaper.org/)’s `albersusa` projection. This was mostly for fun, I wouldn't use it to line up geometries generated in Mapshaper.
 
 The lower 48 use [geoAlbers](https://d3js.org/d3-geo/conic#geoAlbers). Alaska and Hawaii use separate [geoConicEqualArea](https://d3js.org/d3-geo/conic#geoConicEqualArea) definitions with Mapshaper’s standard parallels, rotations, and inset placement (Alaska is drawn at reduced scale relative to the contiguous states).
 
