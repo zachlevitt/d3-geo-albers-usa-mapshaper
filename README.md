@@ -1,37 +1,69 @@
-# d3-geo-albers-usa-vertical
+# d3-geo-albers-usa-mapshaper
 
-Map projections compatible with [d3-geo](https://d3js.org/d3-geo) that adapt the [Albers USA projection](https://d3js.org/d3-geo/conic#geoAlbersUsa) for vertical screens.
+A [d3-geo](https://d3js.org/d3-geo) composite projection that matches [Mapshaper](https://mapshaper.org/)’s `albersusa` projection, so geometries processed in Mapshaper line up when you draw them in D3 with the same projection parameters.
+
+The lower 48 use [geoAlbers](https://d3js.org/d3-geo/conic#geoAlbers). Alaska and Hawaii use separate [geoConicEqualArea](https://d3js.org/d3-geo/conic#geoConicEqualArea) definitions with Mapshaper’s standard parallels, rotations, and inset placement (Alaska is drawn at reduced scale relative to the contiguous states).
 
 ## Installing
 
-If you use NPM, `npm install d3-geo-albers-usa-vertical`.
+With npm:
 
-```js
-import { geoAlbersUsaVertical } from "d3-geo-albers-usa-vertical";
-
-const projection = geoAlbersUsaVertical();
+```bash
+npm install d3-geo-albers-usa-mapshaper
 ```
 
-[Try d3-geo-albers-usa-vertical in your browser](https://observablehq.com/@harrystevens/d3-geo-albers-usa-vertical).
+## Usage
+
+```js
+import { geoAlbersUsaMapshaper } from "d3-geo-albers-usa-mapshaper";
+
+const projection = geoAlbersUsaMapshaper();
+
+// Typical D3 pattern: size to a viewport
+const path = d3.geoPath().projection(
+  projection.fitSize([width, height], geojson)
+);
+```
 
 ## API Reference
 
-<a name="geoAlbersUsaVertical" href="#geoAlbersUsaVertical">#</a> d3.<b>geoAlbersUsaVertical</b>() · [Source](https://github.com/HarryStevens/d3-geo-albers-usa-vertical/blob/main/src/albersUsaVertical.js)
+<a name="geoAlbersUsaMapshaper" href="#geoAlbersUsaMapshaper">#</a> **geoAlbersUsaMapshaper**()
 
-<a href="https://observablehq.com/@harrystevens/d3-geo-albers-usa-vertical"><img src="img/albers-usa-vertical.png" width="300" height="691" alt="A map of U.S. counties using the vertical Albers USA projection"></a>
+Constructs a new Mapshaper-compatible Albers USA projection. The returned object is a function `(coordinates) => [x, y]` plus the methods below.
 
-This is a U.S.-centric composite projection of four [geoConicEqualArea](https://d3js.org/d3-geo/conic#geoConicEqualArea) projections: On the top half of the map, [geoAlbers](https://d3js.org/d3-geo/conic#geoAlbers) is used for the eastern part of the lower fourty-eight states. On the bottom half of the map, geoAlbers is used for the western part of the lower forty-eight states, and separate conic equal-area projections are used for Alaska and Hawaii. The scale for Alaska is diminished: it is projected at 0.35× its true relative area.
+<a name="projection_scale" href="#projection_scale">#</a> *projection*.**scale**([*scale*])
 
-The constituent projections have fixed clip, center and rotation, and thus this projection does not support [<i>projection</i>.center](https://d3js.org/d3-geo/projection#projection_center), [<i>projection</i>.rotate](https://d3js.org/d3-geo/projection#projection_rotate), [<i>projection</i>.clipAngle](https://d3js.org/d3-geo/projection#projection_clipAngle), or [<i>projection</i>.clipExtent](https://d3js.org/d3-geo/projection#projection_clipExtent).
+If *scale* is specified, sets the overall scale factor and updates component projections. If omitted, returns the current scale.
 
-<a name="geoAlbersUsaPrVertical" href="#geoAlbersUsaPrVertical">#</a> d3.<b>geoAlbersUsaPrVertical</b>() · [Source](https://github.com/HarryStevens/d3-geo-albers-usa-vertical/blob/main/src/albersUsaPrVertical.js)
+<a name="projection_translate" href="#projection_translate">#</a> *projection*.**translate**([*point*])
 
-<a href="https://observablehq.com/@harrystevens/d3-geo-albers-usa-pr-vertical"><img src="img/albers-usa-pr-vertical.png" width="300" height="691" alt="A map of U.S. counties using the vertical Albers USA projection with Puerto Rico"></a>
+If *point* is specified, sets the translation `[x, y]` and recomputes clip extents and inset positions. If omitted, returns the current translation.
 
-A composite projection identical to the <a href="#geoAlbersUsaVertical">U.S. states vertical projection</a> but with another inset for Puerto Rico, projected with [geoConicEqualArea](https://d3js.org/d3-geo/conic#geoConicEqualArea) and placed to the right of Florida.
+<a name="projection_precision" href="#projection_precision">#</a> *projection*.**precision**([*precision*])
 
-<a name="projection_reverse" href="#projection_reverse">#</a> <i>projection</i>.<b>reverse</b>([<i>reverse</i>])
+If *precision* is specified, sets adaptive sampling precision on all component projections (see [projection.precision](https://d3js.org/d3-geo/projection#projection_precision)). If omitted, returns the current precision.
 
-If <i>reverse</i> is specified, sets whether the projection’s layout is reversed. If true, the projection is reversed: the top portion of the map shows the western half of the contiguous U.S. and the Alaska and Hawaii insets, while the bottom portion of the map shows the eastern half of the contiguous U.S. If <i>reverse</i> is not specified, returns the current setting, which defaults to false.
+<a name="projection_stream" href="#projection_stream">#</a> *projection*.**stream**(*stream*)
 
-<img src="img/albers-usa-vertical-reverse.png" width="300" height="691" alt="A map of U.S. counties using the reversed vertical Albers USA projection, where the western half and insets are on top and the eastern half is on bottom">
+Returns a composite [geo stream](https://d3js.org/d3-geo/stream) for rendering.
+
+<a name="projection_invert" href="#projection_invert">#</a> *projection*.**invert**(*point*)
+
+Given pixel coordinates `[x, y]`, returns `[longitude, latitude]` by delegating to the lower 48, Alaska, or Hawaii projection based on inset bounds.
+
+<a name="projection_fitExtent" href="#projection_fitExtent">#</a> *projection*.**fitExtent**(*extent*, *object*)  
+<a name="projection_fitSize" href="#projection_fitSize">#</a> *projection*.**fitSize**(*size*, *object*)  
+<a name="projection_fitWidth" href="#projection_fitWidth">#</a> *projection*.**fitWidth**(*width*, *object*)  
+<a name="projection_fitHeight" href="#projection_fitHeight">#</a> *projection*.**fitHeight**(*height*, *object*)
+
+Convenience methods to set scale and translate so the given GeoJSON *object* fits the viewport; see [fitExtent](https://d3js.org/d3-geo/projection#projection_fitExtent) and related helpers in d3-geo.
+
+## Limitations
+
+This projection fixes clip extents, centers, and rotations internally to mirror Mapshaper’s layout. It does not expose generic [**projection.center**](https://d3js.org/d3-geo/projection#projection_center), [**projection.rotate**](https://d3js.org/d3-geo/projection#projection_rotate), [**projection.clipAngle**](https://d3js.org/d3-geo/projection#projection_clipAngle), or [**projection.clipExtent**](https://d3js.org/d3-geo/projection#projection_clipExtent) on the composite object the way a single-region d3 projection would.
+
+Puerto Rico and other territories are not included as separate insets in this implementation.
+
+## License
+
+ISC. See [LICENSE](./LICENSE).

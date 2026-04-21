@@ -110,6 +110,8 @@
         // Add click handler for testing invert
         svg.on("click", function(event) {
           const [x, y] = d3.pointer(event);
+          const coords_in_projection = projection([x, y]);
+          console.log(`Coords in projection: [${coords_in_projection[0].toFixed(2)}, ${coords_in_projection[1].toFixed(2)}]`);
           const coords = projection.invert([x, y]);
           if (coords) {
             console.log(`Screen: [${x.toFixed(2)}, ${y.toFixed(2)}] -> Geographic: [${coords[0].toFixed(4)}°, ${coords[1].toFixed(4)}°]`);

@@ -1,6 +1,1 @@
-import geoAlbersUsaMapshaper from "./albersUsaMapshaper.js";
-
-export {
-  geoAlbersUsaMapshaper
-};
-
+export { geoAlbersUsaMapshaper } from "./albersUsaMapshaper.js";
